@@ -6,14 +6,25 @@ public static class Arrays
     /// integer greater than 0.
     /// </summary>
     /// <returns>array of doubles that are the multiples of the supplied number</returns>
+    
+    
+     // Step 1: Create an array of size 'length' to hold the multiples
+     // Step 2: Use a loop to fill each index in the array
+     //         For example, if index is i, the value at that position should be: number * (i + 1)
+     // Step 3: After the loop is finished, return the filled array
     public static double[] MultiplesOf(double number, int length)
     {
-        // TODO Problem 1 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+        // Step 1: Create an array to hold the multiples
+        double[] multiples = new double[length];
 
-        return []; // replace this return statement with your own
+        // Step 2: Use a loop to fill the array with multiples
+        for (int i = 0; i < length; i++)
+        {
+            multiples[i] = number * (i + 1);
+        }
+
+        // Step 3: Return the completed array
+        return multiples;
     }
 
     /// <summary>
@@ -29,5 +40,19 @@ public static class Arrays
         // Remember: Using comments in your program, write down your process for solving this problem
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
+        
+        // Step 1: Find how many elements are in the list
+        int count = data.Count;
+
+        // Step 2: Split the list into right and left parts
+        List<int> right = data.GetRange(count - amount, amount);
+        List<int> left = data.GetRange(0, count - amount);
+
+        // Step 3: Clear the original list
+        data.Clear();
+
+        // Step 4: Add the rotated data: right part first, then left
+        data.AddRange(right);
+        data.AddRange(left);
     }
 }

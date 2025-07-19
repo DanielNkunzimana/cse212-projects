@@ -22,7 +22,24 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var wordSet = new HashSet<string>(words);
+        var seen = new HashSet<string>();
+        var result = new List<string>();
+
+        foreach (var word in words)
+        {
+            if (word[0] == word[1]) continue; // skip same-letter words like "aa"
+
+            var reversed = new string(new[] { word[1], word[0] });
+
+            if (wordSet.Contains(reversed) && !seen.Contains(reversed))
+            {
+                result.Add($"{word} & {reversed}");
+                seen.Add(word);
+            }
+        }
+
+        return result.ToArray();
     }
 
     /// <summary>
@@ -43,6 +60,14 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            if (fields.Length > 3)
+            {
+                var degree = fields[3].Trim();
+                if (degrees.ContainsKey(degree))
+                    degrees[degree]++;
+                else
+                    degrees[degree] = 1;
+            }
         }
 
         return degrees;
@@ -67,7 +92,22 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        var dict1 = new Dictionary<char, int>();
+        var dict2 = new Dictionary<char, int>();
+
+        foreach (char c in word1.ToLower().Where(c => c != ' '))
+        {
+            if (dict1.ContainsKey(c)) dict1[c]++;
+            else dict1[c] = 1;
+        }
+
+        foreach (char c in word2.ToLower().Where(c => c != ' '))
+        {
+            if (dict2.ContainsKey(c)) dict2[c]++;
+            else dict2[c] = 1;
+        }
+
+        return dict1.Count == dict2.Count && !dict1.Except(dict2).Any();
     }
 
     /// <summary>
@@ -84,6 +124,28 @@ public static class SetsAndMaps
     /// https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php
     /// 
     /// </summary>
+    
+        // TODO Problem 5:
+        // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
+        // on those classes so that the call to Deserialize above works properly.
+        // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
+        // 3. Return an array of these string descriptions.
+    public class FeatureCollection
+    {
+        public List<Feature> Features { get; set; }
+    }
+
+    public class Feature
+    {
+        public Properties Properties { get; set; }
+    }
+
+    public class Properties
+    {
+        public string Place { get; set; }
+        public double? Mag { get; set; }
+    }
+
     public static string[] EarthquakeDailySummary()
     {
         const string uri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
@@ -96,11 +158,19 @@ public static class SetsAndMaps
 
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
-        // TODO Problem 5:
-        // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
-        // on those classes so that the call to Deserialize above works properly.
-        // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
-        // 3. Return an array of these string descriptions.
-        return [];
+        var result = new List<string>();
+
+        if (featureCollection?.Features != null)
+        {
+            foreach (var feature in featureCollection.Features)
+            {
+                if (feature.Properties?.Place != null && feature.Properties.Mag.HasValue)
+                {
+                    result.Add($"{feature.Properties.Place} - Mag {feature.Properties.Mag.Value}");
+                }
+            }
+        }
+
+        return result.ToArray();
+        }
     }
-}
